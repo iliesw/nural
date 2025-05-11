@@ -23,7 +23,6 @@ function softmax(x: number[]) {
 }
 
 function softmaxDeriv(softmaxOutput: number[], targetIndex: number) {
-  // Derivative of softmax with respect to its input
   return softmaxOutput.map((output, i) => {
     if (i === targetIndex) {
       return output * (1 - output);
@@ -34,12 +33,10 @@ function softmaxDeriv(softmaxOutput: number[], targetIndex: number) {
 }
 
 function computeNetwork(Network: Layer[], input: number[]) {
-  const activations: number[][] = [input]; // Store all layer activations
-  const zValues: number[][] = []; // Store all z values (pre-activation)
-  
+  const activations: number[][] = [input]; 
+  const zValues: number[][] = []; 
   let currentInput = input;
   
-  // Forward pass
   for (let i = 0; i < Network.length; i++) {
     const layerResult = computeLayerWithDetails(Network[i], currentInput, i === Network.length - 1);
     zValues.push(layerResult.zValues);
@@ -47,7 +44,6 @@ function computeNetwork(Network: Layer[], input: number[]) {
     activations.push(currentInput);
   }
   
-  // Apply softmax to final layer output
   const softmaxOutput = softmax(currentInput);
   activations[activations.length - 1] = softmaxOutput;
   
@@ -66,7 +62,6 @@ function computeLayerWithDetails(Layer: Layer, input: number[], isLastLayer = fa
     const z = Layer[i].compute(input);
     zValues.push(z);
     
-    // Apply activation function (except for last layer, which will use softmax later)
     const activation = isLastLayer ? z : Sigmoid(z);
     activations.push(activation);
   }
@@ -75,7 +70,6 @@ function computeLayerWithDetails(Layer: Layer, input: number[], isLastLayer = fa
 }
 
 function crossEntropyLoss(output: number[], expected: number[]) {
-  // Cross entropy loss
   const loss = output.map((v, i) => -expected[i] * Math.log(v + 1e-10));
   return loss.reduce((acc, val) => acc + val, 0) / output.length;
 }
